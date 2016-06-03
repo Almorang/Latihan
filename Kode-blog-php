@@ -1,0 +1,10 @@
+<?php
+ob_start();session_start();//database credentials
+define('DBHOST','localhost');define('DBUSER','database username');define('DBPASS','database password');define('DBNAME','database name');$db=newPDO("mysql:host=".DBHOST.";port=8889;dbname=".DBNAME,DBUSER,DBPASS);$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);//set timezone
+date_default_timezone_set('Asia/Jakarta');
+
+//load classes as needed
+function__autoload($class){$class=strtolower($class);$classpath='classes/class.'.$class.'.php';if(file_exists($classpath)){require_once$classpath;}$classpath='../classes/class.'.$class.'.php';if(file_exists($classpath)){require_once$classpath;}}$user=newUser($db);
+
+<?php
+ try{$stmt=$db->query('SELECT postID, postTitle, postDesc, postDate FROM blog_posts ORDER BY postID DESC');while($row=$stmt->fetch()){echo '<div>';echo '<h1><ahref="viewpost.php?id='.$row['postID'].'">'.$row['postTitle'].'</a></h1>';echo '<p>Posted on '.date('jS M Y H:i:s', strtotime($row['postDate'])).'</p>';echo '<p>'.$row['postDesc'].'</p>';echo '<p><ahref="viewpost.php?id='.$row['postID'].'">Read More</a></p>';echo '</div>';}}catch(PDOException $e){echo$e->getMessage();}?>
