@@ -8,3 +8,31 @@ function__autoload($class){$class=strtolower($class);$classpath='classes/class.'
 
 <?php
  try{$stmt=$db->query('SELECT postID, postTitle, postDesc, postDate FROM blog_posts ORDER BY postID DESC');while($row=$stmt->fetch()){echo '<div>';echo '<h1><ahref="viewpost.php?id='.$row['postID'].'">'.$row['postTitle'].'</a></h1>';echo '<p>Posted on '.date('jS M Y H:i:s', strtotime($row['postDate'])).'</p>';echo '<p>'.$row['postDesc'].'</p>';echo '<p><ahref="viewpost.php?id='.$row['postID'].'">Read More</a></p>';echo '</div>';}}catch(PDOException $e){echo$e->getMessage();}?>
+
+
+$stmt=$db->prepare('SELECT postID, postTitle, postCont, postDate FROM blog_posts WHERE postID = :postID');$stmt->execute(array(':postID'=>$_GET['id']));$row=$stmt->fetch();
+
+
+
+if($row['postID']==''){header('Location: ./');    exit;}
+
+
+echo '<div>';echo '<h1>'.$row['postTitle'].'</h1>';echo '<p>Posted on '.date('jS M Y', strtotime($row['postDate'])).'</p>';echo '<p>'.$row['postCont'].'</p>';echo '</div>';
+
+
+//include config
+require_once('../includes/config.php');//if not logged in redirect to login page
+if(!$user->is_logged_in()){header('Location: login.php');}
+
+
+<form action=""method="post"><p><label>Username</label><inputtype="text"name="username"value=""/></p><p><label>Password</label><input type="password"name="password"value=""/></p><p><label></label><inputtype="submit"name="submit"value="Login"/></p></form>
+
+
+//process login form if submitted
+if(isset($_POST['submit'])){$username=trim($_POST['username']);$password=trim($_POST['password']);if($user->login($username,$password)){ //logged in return to index page
+header('Location: index.php');        exit;}else{$message= '<pclass="error">Wrong username or password</p>';}}//end if submit
+if(isset($message)){echo$message;}
+
+
+
+private$db;publicfunction__construct($db){$this->db=$db;}
