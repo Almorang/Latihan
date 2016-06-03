@@ -1,0 +1,2 @@
+# Latihan
+Belajar untuk memulai
